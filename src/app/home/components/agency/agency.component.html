@@ -1,0 +1,157 @@
+<Div>
+  <h1>Agencies</h1>
+  <ul>
+    <li *ngFor="let agency of agencies$ | async">
+      <span>Name: {{ agency.name }}</span>
+      <hr />
+    </li>
+  </ul>
+  <a [routerLink]="['./../customer']">customers</a>
+</Div>
+<button (click)="showForm$.next(true)" [disabled]="!!(showForm$ | async)">
+  Add Agency
+</button>
+<div *ngIf="!!(showForm$ | async)">
+  <form (ngSubmit)="saveForm()" [formGroup]="form">
+    <mat-form-field>
+      <mat-label>Name</mat-label>
+      <input
+        matInput
+        class="form-control"
+        type="text"
+        placeholder="Agency name (required)"
+        required
+        formControlName="name"
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Street</mat-label>
+      <input
+        matInput
+        class="form-control"
+        type="text"
+        placeholder="Street (required)"
+        required
+        formControlName="street"
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Housenumber</mat-label>
+      <input
+        matInput
+        class="form-control"
+        type="text"
+        placeholder="Housenumber (required)"
+        required
+        formControlName="houseNumber"
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Postal-box</mat-label>
+      <input
+        matInput
+        class="form-control"
+        type="text"
+        placeholder="Postal box (required)"
+        required
+        formControlName="postalBox"
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>City</mat-label>
+      <input
+        matInput
+        class="form-control"
+        type="text"
+        placeholder="City (required)"
+        required
+        formControlName="city"
+      />
+    </mat-form-field>
+    <mat-form-field>
+      <mat-label>Zipcode</mat-label>
+      <input
+        matInput
+        class="form-control"
+        type="text"
+        placeholder="Zipcode (required)"
+        required
+        formControlName="zipCode"
+      />
+    </mat-form-field>
+
+    <button type="submit">Save agency</button>
+  </form>
+</div>
+<table #personTableAgencies mat-table [dataSource]="persons$ | async">
+  <ng-container matColumnDef="Select">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let person">
+      <mat-checkbox
+        (change)="
+          _personTableService.setSelectedIn(person.id, personTableAgenciesName)
+        "
+        [checked]="
+          _personTableService.isChecked(person.id, personTableAgenciesName)
+        "
+      ></mat-checkbox>
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="Name">
+    <th mat-header-cell *matHeaderCellDef>Naam</th>
+    <td mat-cell *matCellDef="let person">
+      {{ person.name }}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="First-name">
+    <th mat-header-cell *matHeaderCellDef>Voornaam</th>
+    <td mat-cell *matCellDef="let person">
+      {{ person.firstName }}
+    </td>
+  </ng-container>
+  <ng-container matColumnDef="Edit">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let person">
+      <button
+        mat-icon-button
+        (click)="
+          _personTableService.editPerson(person.id);
+          $event.stopImmediatePropagation()
+        "
+      >
+        <i class="material-icons md-light md-18">edit</i>
+      </button>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="Delete">
+    <th mat-header-cell *matHeaderCellDef></th>
+    <td mat-cell *matCellDef="let person">
+      <button
+        mat-icon-button
+        [disabled]="person.selectedIn.length > 0"
+        (click)="
+          _personTableService.deletePerson(person.id);
+          $event.stopImmediatePropagation()
+        "
+      >
+        <i class="material-icons md-light md-18">close</i>
+      </button>
+    </td>
+  </ng-container>
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+  <tr mat-row *matRowDef="let person; columns: columnsToDisplay"></tr>
+</table>
+
+<button (click)="_personTableService.addPerson()">Add person</button>
+
+<ul *ngFor="let person of persons$ | async">
+  <li>
+    <span>{{ person.id }}</span>
+    <span>{{ person.name }}</span>
+    <span> Length Selectedin: {{ person.selectedIn.length }}</span>
+    <ul *ngFor="let selectedIn of person.selectedIn">
+      <li>{{ selectedIn }}</li>
+    </ul>
+  </li>
+</ul>
